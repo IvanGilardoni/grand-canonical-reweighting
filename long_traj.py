@@ -41,16 +41,17 @@ else:
     date = 1996
 
 
-path = '../Result_' + date
+path = '../Result_' + str(date)
 
 if not os.path.exists(path):
     os.mkdir(path)
 else:
     assert not if_delta, 'possible overwriting'
 
-input_values = {'n_sites': n_sites, 'n_steps': n_steps, 'delta': delta, 'seed': seed, 'strategy': which_strategy}
-temp = pandas.DataFrame(list(input_values.values()), index=list(input_values.keys()), columns=[date]).T
-temp.to_csv(path + '/input')
+if if_delta:
+    input_values = {'n_sites': n_sites, 'n_steps': n_steps, 'delta': delta, 'seed': seed, 'strategy': which_strategy}
+    temp = pandas.DataFrame(list(input_values.values()), index=list(input_values.keys()), columns=[date]).T
+    temp.to_csv(path + '/input')
 
 #%% repeat over different n. of particles: Metropolis and compute Sk
 
@@ -70,7 +71,7 @@ for n_particles in list_n_particles:
 
     # this value delta/(2*n_particles) for the probability that each particle moves
     # corresponds to setting a value of delta/2 for the av. n. of particles which actually move 
-    proposal_full = {'fun': proposal_exclud_vol, 'args': (n_sites, delta/(2*n_particles), which_strategy)}  # n_sites, 0.3, 0.7)}
+    proposal_full = {'fun': proposal_exclud_vol, 'args': (n_sites, 5/(2*n_particles), which_strategy)}  # n_sites, 0.3, 0.7)}
 
     traj, ene, av_alpha = run_Metropolis(x0, n_steps=n_steps, proposal=proposal_full, energy_function=energy_function_full)
 
